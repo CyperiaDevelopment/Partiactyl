@@ -1,0 +1,200 @@
+{
+  "version": "heliactyl-4.1",
+  "defaulttheme": "vanta",
+  "website": {
+    "port": 7000,
+    "secret": "change this website session secret password, make sure to change this for your website's securit"
+  },
+  "pterodactyl": {
+    "domain": "https://gp.hexitnodes.com",
+    "key": "eW1ff8QB9Yq8eMJVd6y3FFSqjpP7ziH9hxE2UActWQtL5kam"
+  },
+  "database": "database.sqlite",
+  "api": {
+    "client": {
+       "api": {
+         "enabled": true,
+         "code": "eRPC4uesr4PKFANgOMTEs3k3s0JX3IHNUsWubugLGjxkusin"
+       },
+       "bot": {
+         "token": "ODU4MTAwMzkyNTY1NjY5ODg5.YNZORA.L6X3GmocsEj0z5ZHIxwGQNaMQDs",
+         "joinguild": {
+           "_comment": "The Discord bot must be in these servers and have invite permissions.",
+           "enabled": true,
+           "guildid": ["845575846840500245"],
+           "forcejoin": true,
+           "registeredrole": "846782978868379708"
+        }
+      },
+      "webhook": {
+        "_comment": "URL of the webhook to send messages to.",
+        "webhook_url": "https://discord.com/api/webhooks/856880296313487362/ZWJcmf63p0MNaH1UCUEEsjJamlIWxNMGCubbLL7vKentwpoy3Jp3Ft0ks2kjpy84ROYZ",
+        "auditlogs": {
+          "_comment": "This feature allows you to log actions, and get an overview of a users actions (only works if done with dashactyl, not ptero)",
+          "enabled": true,
+          "_comment2": "The types of notifications disabled. Values: ADMIN, LOGIN, SERVER, COUPONREDEEM",
+          "disabled": []
+        }
+      },
+      "party": {
+          "webhook": "https://discord.com/api/webhooks/858607099512094720/55yiSXWhYr1na5YZV0F6h4a4R7q-uKhvxChtuOzfCZLM3DdYI-sJl3MAFd4Ur0PZ5JYv",
+          "message": "PARTY MODE HAS ENABLED!\nAFK on the AFK Page to get 2x earning bonus.\n",
+          "disabled_message": "PARTY MODE HAS DISABLED!\nYou will no longer get a 2x earning bonus.\n"
+      },
+      "passwordgenerator": {
+        "signup": true,
+        "length": 10
+      },
+      "allow": {
+        "newusers": true,
+        "regen": true,
+        "server": {
+          "create": true,
+          "modify": true,
+          "delete": true
+        },
+        "overresourcessuspend": false,
+        "renewsuspendsystem": {
+          "_comment": "This feature requires a restart in order to work. Also, this requires every server to start suspended, or else this feature would not work for some servers.",
+          "enabled": false,
+          "time": 3600
+        }
+      },
+      "oauth2": {
+        "_comment": "Go to https://discord.dev/ and create an application to set these up.",
+        "id": "858100392565669889",
+        "secret": "6eJDapNf-Wh-_YjRm0YBtcZfXTTkmeUL",
+        "link": "https://client.hexitnodes.com",
+        "callbackpath": "/callback",
+        "prompt": true,
+
+        "ip": {
+          "trust x-forwarded-for": true,
+          "block": [],
+
+          "_comment": "'duplicate check' is an anti-alt check by IPs.",
+          "duplicate check": false,
+
+          "_comment2": "'cookie alt check' is an anti-alt check by cookies.",
+          "cookie alt check": false
+        }
+      },
+      "ratelimits": {
+        "enabled": true,
+
+        "trust x-forwarded-for": true,
+
+        "requests": 30,
+        "per second": 60
+      },
+      "packages": {
+        "default": "default",
+        "list": {
+          "default": {
+            "ram": 3072,
+            "disk": 10240,
+            "cpu": 125,
+            "servers": 4
+          },
+          "booster": {
+            "ram": 6144,
+            "disk": 20480,
+            "cpu": 170,
+            "servers": 6
+          }
+        }
+      },
+      "locations": {
+        "1": {
+          "name": "❌ | Germany, Nuremberg",
+
+          "_comment": "Make 'package' be null to allow anyone with enough resources in their plan to create a server with this location. Also, make the 'package' variable an array, like [], with the location names with quotes to make a user be required to have a plan in order to use the package.",
+          "package": null
+        },
+        "2": {
+          "name": "✔️ | Germany, Falkenstein",
+
+          "_comment": "Make 'package' be null to allow anyone with enough resources in their plan to create a server with this location. Also, make the 'package' variable an array, like [], with the location names with quotes to make a user be required to have a plan in order to use the package.",
+          "package": null
+        },
+        "3": {
+          "name": "✔️ | Finland, Helsinki",
+
+          "_comment": "Make 'package' be null to allow anyone with enough resources in their plan to create a server with this location. Also, make the 'package' variable an array, like [], with the location names with quotes to make a user be required to have a plan in order to use the package.",
+          "package": null
+        }
+      },
+      "eggs": {
+"multiegg": {
+          "display": "Multi Egg",
+          "minimum": {
+            "ram": 102,
+            "disk": 102,
+            "cpu": 10
+          },
+          "maximum": {
+            "ram": null,
+            "disk": null,
+            "cpu": null
+          },
+          "info": {
+            "egg": 15,
+            "docker_image": "quay.io/lapamakelakaopknj/gfjdklgtr09e8y0968jhkbjn:java8-openj9",
+            "startup": "./minecraft.sh",
+            "environment": {
+              "SERVER_JARFILE": "server.jar",
+              "BUILD_NUMBER": "latest"
+            },
+            "feature_limits": {
+              "databases": 1,
+              "backups": 1
+            }
+          }
+        }
+      },
+      "coins": {
+        "enabled": true,
+        "store": {
+          "_comment": "The cost and per is not intended to used with 0. This is not intended to sell resources for coins. Make sure coins are enabled too, or else there can be errors.",
+          "enabled": true,
+          "ram": {
+            "cost": 360,
+            "per": 1024
+          },
+          "disk": {
+            "cost": 160,
+            "per": 2048
+          },
+          "cpu": {
+            "cost": 480,
+            "per": 60
+          },
+          "servers": {
+            "cost": 60,
+            "per": 1
+          }
+        }
+      }
+    },
+     "arcio": {
+      "_comment": "You can make an arc.io widget on https://arc.io. You can get money using arc.io.",
+      "enabled": true,
+      "widgetid": "asgjd",
+
+        "afk page": {
+          "_comment": "This will not effect any current arc.io sessions, and will require a restart to kick everyone out of the websocket sesison.",
+          "_comment2": "Make sure coins are enabled if you choose to enable this option!",
+          "enabled": true,
+
+          "_comment3": "If you change the path, you need to restart for it to take full effect.",
+          "path": "arcws",
+
+          "_comment4": "This afk page will give the users [coins variable] coins every [every variable] seconds.",
+          "every": 60,
+
+          "_comment5": "The coins variable is meant to not be under 1. There may be bugs if the coins variable is less than 1.",
+          "coins": 1
+        }
+    }
+  }
+}

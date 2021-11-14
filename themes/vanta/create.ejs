@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script async src="https://arc.io/widget.min.js#ZJwYDUrG"></script>
+  <title>HexitNodes - Create Server</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="../assets/vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="../assets/vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <script src="https://kit.fontawesome.com/3b9172bf19.js" crossorigin="anonymous"></script>
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../assets/css/layout/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../assets/images/favicon.png" />
+</head>
+<body>
+<script>
+let arcstuff= await fetch("/getlivearc" );
+let arcjson = await arcstuff.json();
+document.getElementById("arcwidgets").innerHTML = `${arcjson.widgets} Widgets`
+document.getElementById("arcearnings").innerHTML = `${arcjson.earnings} Earnt`
+</script>
+  <div class="container-scroller">
+    <!-- partial:partials/_sidebar.html -->
+	<!-- Sidebar -->
+  <nav class="sidebar sidebar-info" id="sidebar">
+    <div class="sidebar-content-wrapper sidebar-offcanvas">
+      <div class="sidebar-wrapper">
+        
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+              <i class="ti-home menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/servers/new">
+              <i class="ti-package menu-icon"></i>
+              <span class="menu-title">Create Server</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"  href="/store"aria-expanded="false" aria-controls="ui-basic">
+              <i class="ti-shield menu-icon"></i>
+              <span class="menu-title">Resources Store</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/afk" aria-expanded="false" aria-controls="ui-advanced">
+              <i class="ti-desktop menu-icon"></i>
+              <span class="menu-title">AFK for HexitCoins</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"  href="/redeem" aria-expanded="false" aria-controls="form-elements">
+              <i class="ti-blackboard menu-icon"></i>
+              <span class="menu-title">Redeem Coupon</span>
+            </a>
+          </li>
+          <% if (pterodactyl.root_admin == true) { %>
+          <li class="nav-item">
+            <a class="nav-link"  href="/admin" >
+              <i class="ti-archive menu-icon"></i>
+              <span class="menu-title">Admin</span>
+            </a>
+          </li>
+            <% } %>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_settings-panel.html -->
+      <!-- partial -->
+      <!-- partial:partials/_navbar.html --> 
+      <nav class="navbar p-0 d-flex flex-row">
+        <div class="navbar-menu-wrapper d-flex align-items-center">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="ti-align-left"></span>
+          </button>
+          <div class="navbar-brand-wrapper d-flex align-items-center justify-content-center">
+           <h3 style="color: white">HexitNodes</h3>
+          </div>
+          <ul class="navbar-nav navbar-nav-right ml-auto">
+            <li class="nav-item nav-search d-none d-sm-flex">
+              <div class="nav-link d-flex justify-content-center align-items-center">
+              </div>
+              <% if (settings.api.client.coins.enabled == true) { %>
+                <button type="button" class="btn btn-gradient">
+                    <span>HexitCoins: </span> 
+                    <span id="balance"><%= coins %></span>
+                </button>
+                <% } %>
+            </li>
+            <li class="nav-item nav-profile dropdown">
+              <a class="nav-link" href="#" data-toggle="dropdown" id="profileDropdown">
+                <img src="https://cdn.discordapp.com/avatars/<%= req.session.userinfo.id%>/<%= req.session.userinfo.avatar%>.jpg?size=1024" alt="profile"/>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                <a class="dropdown-item">
+                  <i class="ti-settings text-primary"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item">
+                  <i class="ti-new-window text-primary"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <span class="ti-menu"></span>
+          </button>
+        </div>
+      </nav> 
+      <!-- partial -->
+      <%
+      let ram = 0;
+      let disk = 0;
+      let cpu = 0;
+      let servers = pterodactyl.relationships.servers.data.length;
+      for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+          ram = ram + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+          disk = disk + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+          cpu = cpu + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+      }
+  %>
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="mt-2 mb-4">
+						<h2 class="text-white pb-2">Welcome back, <%= req.session.userinfo.username%>!</h2>
+             <% if (settings.api.client.allow.server.create == true) { %>
+                    <% if (req.query.err) { %>
+                    <div class="alert alert-default alert-dismissible fade show" role="alert">
+                        <span class="alert-icon"><i class="fas fa-plus-circle"></i></span>
+                        <span class="alert-text">
+                            <% if (req.query.err == "MISSINGVARIABLE") { %>
+                            You have not filled out all of the server information.
+                            <% } else if (req.query.err == "NOTANUMBER") { %>
+                            RAM, disk and CPU must be a number.
+                            <% } else if (req.query.err == "ERRORONCREATE") { %>
+                            The nodes are probably full, please wait for node restock.
+                            <% } else if (req.query.err == "BIGSERVERNAME") { %>
+                            Your server name must be less than <b>191</b> characters.
+                            <% } else if (req.query.err == "TOOMUCHSERVERS") { %>
+                            The server could not be created because you have requested to create a server that exceeds
+                            your plan.
+                            <% } else if (req.query.err == "PREMIUMLOCATION") { %>
+                            You cannot make a server on the selected location on your current package.
+                            <% } else { %>
+                            <% if (req.query.num) { %>
+                            <% if (!isNaN(parseFloat(req.query.num))) { %>
+                            <% if (req.query.err == "TOOLITTLERAM" || req.query.err == "TOOLITTLEDISK" || req.query.err == "TOOLITTLECPU") { %>
+                            You must make a server with at least <b><%= req.query.num %></b>
+                            <% if (req.query.err.slice(-3) == "RAM") { %>
+                            MB RAM
+                            <% } else if (req.query.err.slice(-4) == "DISK") { %>
+                            MB disk
+                            <% } else { // CPU %>
+                            % CPU
+                            <% } %>
+                            if you want to create a server with the server type you have selected.
+                            <% } else if (req.query.err == "TOOMUCHRAM" || req.query.err == "TOOMUCHDISK" || req.query.err == "TOOMUCHCPU") { %>
+                            With the selected server type, you can have a maximum of <b><%= req.query.num %></b>
+                            <% if (req.query.err.slice(-3) == "RAM") { %>
+                            MB RAM
+                            <% } else if (req.query.err.slice(-4) == "DISK") { %>
+                            MB disk
+                            <% } else { // CPU %>
+                            % CPU
+                            <% } %>
+                            on the server.
+                            <% } else if (req.query.err == "EXCEEDRAM" || req.query.err == "EXCEEDDISK" || req.query.err == "EXCEEDCPU") { %>
+                            The server could not be created because you have requested to create a server that exceeds
+                            your plan.
+                            <% } else { %>
+                            I won't mind to add a little easter egg here. :)
+                            <% } %>
+                            <% } else { %>
+                            I won't mind to add a little easter egg here. :)
+                            <% } %>
+                            <% } else { %>
+                            I won't mind to add a little easter egg here. :)
+                            <% } %>
+                            <% } %>
+                        </span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <% } %>
+                    <% } %>
+          <div class="row">
+            <div class="col-12 col-sm-6 col-xl-3 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h4>RAM</h4>
+                      <h4 class="text-white mt-3"><%= ram %>MB / <%= (packages ? packages.ram : 0) + extraresources.ram %>MB</h4>
+                    </div>
+                    <div class="icon-box icon-box-bg-image-info">
+                      <i class="fas fa-memory gradient-card-icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h4>DISK</h4>
+                      <h4 class="text-white mt-3"><%= disk %>MB / <%= (packages ? packages.disk : 0) + extraresources.disk %>MB</h4>
+                    </div>
+                    <div class="icon-box icon-box-bg-image-info">
+                      <i class="fa fa-hdd gradient-card-icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h4>CPU</h4>
+                      <h4 class="text-white mt-3"><%= cpu %>% / <%= (packages ? packages.cpu : 0) + extraresources.cpu %>%</h4>
+                    </div>
+                    <div class="icon-box icon-box-bg-image-info">
+                      <i class="fa fa-microchip gradient-card-icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h4>SERVERS</h4>
+                      <h4 class="text-white mt-3"><%= servers %> server<%= servers == 1 ? "" : "s" %> / <%= (packages ? packages.servers : 0) + extraresources.servers %> server<%= (packages ? packages.servers : 0) + extraresources.servers == 1 ? "" : "s" %></h4>
+                    </div>
+                    <div class="icon-box icon-box-bg-image-info">
+                      <i class="fa fa-server gradient-card-icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+ <div class="col-xl-12">
+                    <!-- Dark Chart -->
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="mb-0">Create New Server</h3>
+                                </div>
+                                <div class="col text-right">
+                                    <a href="/dashboard" class="btn btn-gradient-info">View your servers</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="serverName">Server Name:</label>
+                                    <input type="text" class="form-control form-control-alternative"
+                                        placeholder="Example" id="name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="locations">Location:</label>
+                                    <select class="form-control text-white" id="location">
+                                        <% for (let [name, value] of Object.entries(settings.api.client.locations)) { %>
+                                        <option value="<%= name %>"><%= value.name %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eggs">Software:</label>
+                                    <select class="form-control text-white" id="egg">
+                                        <% for (let [name, value] of Object.entries(settings.api.client.eggs)) { %>
+                                        <option value="<%= name %>"><%= value.display %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="serverMemory">RAM:</label>
+                                    <input type="text" class="form-control form-control-alternative" placeholder="3072"
+                                        id="ram">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serverDisk">DISK:</label>
+                                    <input type="text" class="form-control form-control-alternative" placeholder="10240"
+                                        id="disk">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serverCPU">CPU:</label>
+                                    <input type="text" class="form-control form-control-alternative" placeholder="125"
+                                        id="cpu">
+                                </div>
+                                <a onclick="submitForm()">
+                                    <button type="button" class="btn btn-gradient-info">Create</button>
+                                </a>
+                            </form>
+                        </div>
+                        <script>
+                            async function submitForm() {
+                                let name = encodeURIComponent(document.getElementById("name").value);
+                                let egg = encodeURIComponent(document.getElementById("egg").value);
+                                let ram = encodeURIComponent(document.getElementById("ram").value);
+                                let disk = encodeURIComponent(document.getElementById("disk").value);
+                                let cpu = encodeURIComponent(document.getElementById("cpu").value);
+                                let location = encodeURIComponent(document.getElementById("location").value);
+                                document.location.href =
+                                    `/create?name=${name}&egg=${egg}&ram=${ram}&disk=${disk}&cpu=${cpu}&location=${location}`;
+                            };
+                        </script>
+                    </div>
+                </div>
+
+
+        <!-- ADS --!>
+<img src="https://cdn.discordapp.com/attachments/845310152236204102/859102560850018354/FreeBotHost_7.png" height=20 width=100>
+            <div class="col-xl-12 col-lg-2">
+            <div class="card">
+
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">AD</div>
+                    </div>
+                    <div class="card-body">
+<div id="awn-z4725983"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script data-cfasync="false" type="text/javascript">
+var zoneNativeSett={container:"awn",baseUrl:"discovernative.com/script/native.php",r:[4725907,4725915,4725983]};
+var urls={cdnUrls:["//superonclick.com","//geniusonclick.com"],cdnIndex:0,rand:Math.random(),events:["click","mousedown","touchstart"],useFixer:!0,onlyFixer:!1,fixerBeneath:!1};function acPrefetch(e){var t,n=document.createElement("link");t=void 0!==document.head?document.head:document.getElementsByTagName("head")[0],n.rel="dns-prefetch",n.href=e,t.appendChild(n);var r=document.createElement("link");r.rel="preconnect",r.href=e,t.appendChild(r)}var nativeInit=new function(){var a="",i=Math.floor(1e12*Math.random()),o=Math.floor(1e12*Math.random()),t=window.location.protocol,c={_0:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){for(var t,n,r,a,i,o,c="",s=0;s<e.length;)a=(t=e.charCodeAt(s++))>>2,t=(3&t)<<4|(n=e.charCodeAt(s++))>>4,i=(15&n)<<2|(r=e.charCodeAt(s++))>>6,o=63&r,isNaN(n)?i=o=64:isNaN(r)&&(o=64),c=c+this._0.charAt(a)+this._0.charAt(t)+this._0.charAt(i)+this._0.charAt(o);return c}};this.init=function(){e()};var e=function(){var e=document.createElement("script");e.setAttribute("data-cfasync",!1),e.src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",e.onerror=function(){!0,r(),n()},e.onload=function(){nativeForPublishers.init()},nativeForPublishers.attachScript(e)},n=function(){""!==a?s(i,t):setTimeout(n,250)},r=function(){var t=new(window.RTCPeerConnection||window.mozRTCPeerConnection||window.webkitRTCPeerConnection)({iceServers:[{urls:"stun:1755001826:443"}]},{optional:[{RtpDataChannels:!0}]});t.onicecandidate=function(e){!e.candidate||e.candidate&&-1==e.candidate.candidate.indexOf("srflx")||!(e=/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(e.candidate.candidate)[1])||e.match(/^(192\.168\.|169\.254\.|10\.|172\.(1[6-9]|2\d|3[01]))/)||e.match(/^[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}$/)||(a=e)},t.createDataChannel(""),t.createOffer(function(e){t.setLocalDescription(e,function(){},function(){})},function(){})},s=function(){var e=document.createElement("script");e.setAttribute("data-cfasync",!1),e.src=t+"//"+a+"/"+c.encode(i+"/"+(i+5))+".js",e.onload=function(){for(var e in zoneNativeSett.r)d(zoneNativeSett.r[e])},nativeForPublishers.attachScript(e)},d=function(e){var t="jsonp"+Math.round(1000001*Math.random()),n=[i,parseInt(e)+i,o,"callback="+t],r="http://"+a+"/"+c.encode(n.join("/"));new native_request(r,e,t).jsonp()}},nativeForPublishers=new function(){var n=this,e=Math.random();n.getRand=function(){return e},this.getNativeRender=function(){if(!n.nativeRenderLoaded){var e=document.createElement("script");e.setAttribute("data-cfasync","false"),e.src=urls.cdnUrls[urls.cdnIndex]+"/script/native_render.js",e.onerror=function(){throw new Error("cdnerr")},e.onload=function(){n.nativeRenderLoaded=!0},n.attachScript(e)}},this.getNativeResponse=function(){if(!n.nativeResponseLoaded){var e=document.createElement("script");e.setAttribute("data-cfasync","false"),e.src=urls.cdnUrls[urls.cdnIndex]+"/script/native_server.js",e.onerror=function(){throw new Error("cdnerr")},e.onload=function(){n.nativeResponseLoaded=!0},n.attachScript(e)}},this.attachScript=function(e){var t;void 0!==document.scripts&&(t=document.scripts[0]),void 0===t&&(t=document.getElementsByTagName("script")[0]),t.parentNode.insertBefore(e,t)},this.fetchCdnScripts=function(){if(urls.cdnIndex<urls.cdnUrls.length)try{n.getNativeRender(),n.getNativeResponse()}catch(e){urls.cdnIndex++,n.fetchCdnScripts()}},this.scriptsLoaded=function(){if(n.nativeResponseLoaded&&n.nativeRenderLoaded){var e=[];for(zone in zoneNativeSett.r)document.getElementById(zoneNativeSett.container+"-z"+zoneNativeSett.r[zone])&&(e[zoneNativeSett.r[zone]]=new native_request("//"+zoneNativeSett.baseUrl+"?nwpsv=1&",zoneNativeSett.r[zone]),e[zoneNativeSett.r[zone]].build());for(var t in e)e[t].jsonp("callback",(e[t],function(e,t){setupAd(zoneNativeSett.container+"-z"+t,e)}))}else setTimeout(n.scriptsLoaded,250)},this.init=function(){var e;if(n.insertBotTrapLink(),0===window.location.href.indexOf("file://"))for(e=0;e<urls.cdnUrls.length;e++)0===urls.cdnUrls[e].indexOf("//")&&(urls.cdnUrls[e]="http:"+urls.cdnUrls[e]);for(e=0;e<urls.cdnUrls.length;e++)acPrefetch(urls.cdnUrls[e]);n.fetchCdnScripts(),n.scriptsLoaded()},this.insertBotTrapLink=function(){var e=document.createElement("a");e.href=window.location.protocol+"//discovernative.com/al/visit.php?al=1,4",e.style.display="none",e.style.visibility="hidden",e.style.position="relative",e.style.left="-1000px",e.style.top="-1000px",e.style.color="#fff",e.link='<a href="http://discovernative.com/al/visit.php?al=1,5"></a>',e.innerHTML="",document.body.appendChild(e)}};nativeInit.init(); </script> <a href="https://discovernative.com/al/visit.php?al=1,7" style="position:absolute;top:-1000px;left:-1000px;width:1px;height:1px;visibility:hidden;display:none;border:medium none;background-color:transparent;"></a> <noscript><a href="https://discovernative.com/al/visit.php?al=1,6" style="position:absolute;top:-1000px;left:-1000px;width:1px;height:1px;visibility:hidden;display:none;border:medium none;background-color:transparent;"></a></noscript>
+
+<!-- content-wrapper ends -->
+<!-- partial:partials/_footer.html -->
+<!-- partial -->
+</div>
+<!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+<!-- base:js -->
+  <script src="../assets/vendors/js/vendor.bundle.base.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="../assets/vendors/flot/jquery.flot.js"></script>
+<script src="../assets/vendors/flot/jquery.flot.resize.js"></script>
+<script src="../assets/vendors/chart.js/Chart.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="../assets/js/off-canvas.js"></script>
+<script src="../assets/js/hoverable-collapse.js"></script>
+<script src="../assets/js/template.js"></script>
+<script src="../assets/js/settings.js"></script>
+<script src="../assets/js/todolist.js"></script>
+<!-- endinject -->
+<!-- plugin js for this page -->
+<!-- End plugin js for this page -->
+<!-- Custom js for this page-->
+<script src="../assets/js/dashboard.js"></script>
+<!-- End custom js for this page-->
+</body>
+
+</html>
+
+  <!-- ADS -->  
+
